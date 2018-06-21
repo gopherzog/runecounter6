@@ -82,7 +82,7 @@ func printProverbs(ch0, ch1 chan *proverb) {
 	}
 	for {
 		select {
-		case p := <-ch0:
+		case p = <-ch0:
 			myPrinter("First", p)
 
 		case p = <-ch1:
