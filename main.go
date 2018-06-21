@@ -60,18 +60,32 @@ func main() {
 		panic(problem)
 	}
 
-	ch := make(chan *proverb)
-	go printProverbs(ch)
-	for _, p := range proverbs {
-		ch <- p
+	ch0 := make(chan *proverb)
+	ch1 := make(chan *proverb)
+	go printProverbs(ch0, ch1)
+	for idx, p := range proverbs {
+		if idx%2 == 0 {
+			ch0 <- p
+		} else {
+			ch1 <- p
+		}
 	}
-	close(ch)
+	close(ch0)
+	close(ch1)
 }
 
-func printProverbs(ch chan *proverb) {
-	for p := range ch {
-		fmt.Printf("%s\n", p.line)
-		fmt.Printf("%s\n\n", formatMap(p.chars))
+func printProverbs(ch0, ch1 chan *proverb) {
+	var p *proverb
+	for {
+		select {
+		case p := <-ch0:
+			fmt.Printf("0 %s\n", p.line)
+			fmt.Printf("%s\n\n", formatMap(p.chars))
+
+		case p = <-ch1:
+			fmt.Printf("1 %s\n", p.line)
+			fmt.Printf("%s\n\n", formatMap(p.chars))
+		}
 	}
 }
 
