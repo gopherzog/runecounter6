@@ -76,15 +76,17 @@ func main() {
 
 func printProverbs(ch0, ch1 chan *proverb) {
 	var p *proverb
+	myPrinter := func(chanName string, p *proverb) {
+		fmt.Printf("%s: %s\n", chanName, p.line)
+		fmt.Printf("%s\n\n", formatMap(p.chars))
+	}
 	for {
 		select {
 		case p := <-ch0:
-			fmt.Printf("0 %s\n", p.line)
-			fmt.Printf("%s\n\n", formatMap(p.chars))
+			myPrinter("First", p)
 
 		case p = <-ch1:
-			fmt.Printf("1 %s\n", p.line)
-			fmt.Printf("%s\n\n", formatMap(p.chars))
+			myPrinter("Second", p)
 		}
 	}
 }
